@@ -104,6 +104,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+CSRF_TRUSTED_ORIGINS = [ 
+    https://8000-idx-email-scheduler-1723174218639.cluster-7ubberrabzh4qqy2g4z7wgxuw2.cloudworkstations.dev/"
+]
 
 
 # Password validation

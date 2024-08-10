@@ -2,10 +2,10 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserRegisterSerialiser
+from .serializers import UserRegisterSerialiser,MyTokenObtainPairSerializer
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import MyTokenObtainPairSerializer
+
 
 # Create your views here.
 class UserRegisterView(APIView):
