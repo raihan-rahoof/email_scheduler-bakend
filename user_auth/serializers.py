@@ -54,3 +54,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         attrs.update({'username':username})
         return super().validate(attrs)
+
+class VerifyOtpSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.CharField(max_length=6)
+
+    def validate(self, attrs):
+        
+        return super().validate(attrs)
