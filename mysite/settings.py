@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_celery_results',
+    'django_celery_beat',
+    
 
     'user_auth',
     
@@ -105,7 +108,7 @@ DATABASES = {
     }
 }
 CSRF_TRUSTED_ORIGINS = [ 
-    https://8000-idx-email-scheduler-1723174218639.cluster-7ubberrabzh4qqy2g4z7wgxuw2.cloudworkstations.dev/"
+    "https://8000-idx-email-scheduler-1723174218639.cluster-7ubberrabzh4qqy2g4z7wgxuw2.cloudworkstations.dev"
 ]
 
 
@@ -149,3 +152,27 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELEY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Kolkata'
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'  
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'emailscheduler51@gmail.com'
+# EMAIL_HOST_PASSWORD = 'gjgbemchavkothmy'
+
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = '8b25eae7f4710c'
+EMAIL_HOST_PASSWORD = '********9fcc'
+EMAIL_PORT = '2525'
