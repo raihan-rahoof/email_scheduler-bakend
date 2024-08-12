@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserRegisterSerialiser,MyTokenObtainPairSerializer,VerifyOtpSerializer
+from .serializers import UserRegisterSerialiser,MyTokenObtainPairSerializer,VerifyOtpSerializer,ResendOTPSerializer
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .utils import generate_otp
@@ -55,6 +55,30 @@ class OtpVerificationView(APIView):
 
 
                 
+class ResendOtpVIew(APIView):
+    serializer = ResendOTPSerializer
+    if serializer.is_valid(raise_exception=True):
+        email = serializer.validated_data['email']
+
+        try:
+            user_verification,created = UserVerification.objects.get_or_create(email=email)
+            new_otp = generate_otp()
+            subject = 'Email Verification OTP'
+            message = f'Your new OTP for email verification is "{new_otp}", Thank you for choosing our service'
+
+            if not created:
+                user_verification.otp = new_otp
+                user_verification.save()
+            else:
+                created.user = request.user
+                created.otp = new_otp
+                created.save()
+
+            send_registration_email.delay(email,subject,message)
+            return Response({'message': 'New OTP sent successfully'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

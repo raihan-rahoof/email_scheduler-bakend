@@ -67,4 +67,5 @@ class VerifyOtpSerializer(serializers.Serializer):
             
         return data
 
-
+class ResendOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
