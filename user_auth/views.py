@@ -54,35 +54,37 @@ class OtpVerificationView(APIView):
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-                
 class ResendOtpVIew(APIView):
-    serializer = ResendOTPSerializer
-    if serializer.is_valid(raise_exception=True):
-        email = serializer.validated_data['email']
 
-        try:
-            user_verification,created = UserVerification.objects.get_or_create(email=email)
-            new_otp = generate_otp()
-            subject = 'Email Verification OTP'
-            message = f'Your new OTP for email verification is "{new_otp}", Thank you for choosing our service'
+    def post(self,request):
+        serializer = ResendOTPSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            email = serializer.validated_data['email']
 
-            if not created:
-                user_verification.otp = new_otp
-                user_verification.save()
-            else:
-                created.user = request.user
-                created.otp = new_otp
-                created.save()
+            try:
+                user = User.objects.get(email=email)
+                if not user.is_active:
+                    user_verification,created = UserVerification.objects.get_or_create(user=user,email=email)
+                    new_otp = generate_otp()
+                    subject = 'Email Verification OTP'
+                    message = f'Your new OTP for email verification is "{new_otp}", Thank you for choosing our service'
 
-            send_registration_email.delay(email,subject,message)
-            return Response({'message': 'New OTP sent successfully'}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    if not created:
+                        user_verification.otp = new_otp
+                        user_verification.save()
+                    
 
-
+                    send_registration_email.delay(email,subject,message)
+                    return Response({'message': 'New OTP sent successfully'}, status=status.HTTP_200_OK)
+                else:
+                    return Response(
+                        {"message": "This user is Already Verified"},
+                        status=status.HTTP_200_OK,
+                    )
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
-
