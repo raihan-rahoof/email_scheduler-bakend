@@ -60,10 +60,11 @@ class VerifyOtpSerializer(serializers.Serializer):
     otp = serializers.CharField(max_length=6)
 
     def validate(self,data):
-        if data['otp'].strip():
+        if not data['otp'].strip():
             raise serializers.ValidationError({'otp':('otp is required')})
         elif len(data['otp']) != 6:
             raise serializers.ValidationError({'otp':('otp must be 6 digits')})
             
         return data
+
 

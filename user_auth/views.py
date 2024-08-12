@@ -36,13 +36,13 @@ class OtpVerificationView(APIView):
     def post(self,request):
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            email = validated_data['email']
-            otp = validated_data['otp']
+            email = serializer.validated_data['email']
+            otp = serializer.validated_data['otp']
 
             try:
                 user_verification = UserVerification.objects.get(email=email,otp=otp)
-                if verification.is_expired():
-                    verificatoin.delete()
+                if user_verification.is_expired():
+                    user_verification.delete()
                     return Response({'error': 'OTP has expired.Try with New Otp'}, status=status.HTTP_400_BAD_REQUEST)
                 user = user_verification.user
                 user.is_active = True
